@@ -1,85 +1,137 @@
-import { h, RectNode, RectNodeModel } from '@logicflow/core'
-
-class featureUnitModel extends RectNodeModel {
-  // 样式属性重写
-  getNodeStyle() {
-    const style = super.getNodeStyle()
-    // style属性的重写实际上是对svg的重写，常见属性如下：
-    // stroke 属性定义了给定图形元素的外轮廓的颜色
-    // stroke-dasharray 用来控制描边打点划线的图案样式
-    // stroke-width 属性指定了当前对象轮廓的宽度
-    // fill 用来定义图形内部的颜色
-    // fill-opacity 指定了填色的不透明度、对象内容物的不透明度
-    // font-size 定义了文本字体大小
-    // color 定义文本颜色
-    style.stroke = 'blue'
-    style.strokeDasharray = '3 3'
-
-    return style
+import { h } from '@logicflow/core'
+import { HtmlResize } from '@logicflow/extension'
+class featureUnitView extends HtmlResize.view {
+  /**
+     * 1.1.7版本后支持在view中重写锚点形状。
+     * 重写锚点新增
+     */
+  getAnchorShape(anchorData) {
+    const { x, y, type } = anchorData
+    return h('rect', {
+      x: x - 5,
+      y: y - 5,
+      width: 10,
+      height: 10,
+      rx: 3,
+      ry: 3,
+      className: `custom-anchor ${type === 'left' ? 'incomming-anchor' : 'outgoing-anchor'}`
+    })
   }
-
-  // 形状属性重写(仅在初始化时调用)
-  initNodeData(data) {
-    // width: 节点的宽度
-    // height：节点的高度
-    // radius: 矩形特有的，节点的圆角
-    // r：圆形节点特有的，半径
-    // rx、ry: 椭圆节点和菱形节点存在，水平、垂直圆角的半径
-    // points: 多边形特有的，多边形的各个顶点
-    super.initNodeData(data)
-    this.width = 150
-    this.height = 150
-    this.radius = 10
+  setHtml(rootEl) {
+    rootEl.innerHTML = ''
+    const {
+      properties: { fields, tableName }
+    } = this.props.model
+    rootEl.setAttribute('class', 'table-container')
+    const container = document.createElement('div')
+    container.className = `table-node table-color-${Math.ceil(
+      Math.random() * 4
+    )}`
+    const tableNameElement = document.createElement('div')
+    tableNameElement.innerText = tableName
+    tableNameElement.className = 'table-name'
+    container.appendChild(tableNameElement)
+    const fragment = document.createDocumentFragment()
+    for (let i = 0; i < fields.length; i++) {
+      const item = fields[i]
+      const itemElement = document.createElement('div')
+      itemElement.className = 'table-feild'
+      const itemKey = document.createElement('span')
+      itemKey.innerText = item.key
+      const itemType = document.createElement('span')
+      itemType.innerText = item.type
+      itemType.className = 'feild-type'
+      itemElement.appendChild(itemKey)
+      itemElement.appendChild(itemType)
+      fragment.appendChild(itemElement)
+    }
+    container.appendChild(fragment)
+    rootEl.appendChild(container)
   }
-
-  // setAttributes() 每当properties发生变化时，都会调用该函数
-
-  // setProperties() 初始化节点的自定义属性
 }
 
-class featureUnitView extends RectNode {
-  // 渲染需要自定义的svg图形函数
-  getLabelShape() {
-    const { model } = this.props
-    const { x, y, width, height } = model
-    const style = model.getNodeStyle()
-    return h(
-      'svg',
-      {
-        x: x - width / 2 + 5,
-        y: y - height / 2 + 5,
-        width: 25,
-        height: 25,
-        viewBox: '0 0 1274 1024'
-      },
-      h('path', {
-        fill: style.stroke,
-        d: 'M655.807326 287.35973m-223.989415 0a218.879 218.879 0 1 0 447.978829 0 218.879 218.879 0 1 0-447.978829 0ZM1039.955839 895.482975c-0.490184-212.177424-172.287821-384.030443-384.148513-384.030443-211.862739 0-383.660376 171.85302-384.15056 384.030443L1039.955839 895.482975z'
-      })
-    )
+class featureUnitModel extends HtmlResize.model {
+  initNodeData(data) {
+    super.initNodeData(data)
+    this.text.editable = false
+    this.width = 200
+    const {
+      properties: { fields }
+    } = this
+    this.height = 60 + fields.length * 24
+    const circleOnlyAsTarget = {
+      message: '只允许从右边的锚点连出',
+      validate: (sourceNode, targetNode, sourceAnchor, targetAnchor) => {
+        return sourceAnchor.type === 'right'
+      }
+    }
+    this.sourceRules.push(circleOnlyAsTarget)
+    this.targetRules.push({
+      message: '只允许连接左边的锚点',
+      validate: (sourceNode, targetNode, sourceAnchor, targetAnchor) => {
+        return targetAnchor.type === 'left'
+      }
+    })
   }
-
-  getShape() {
-    const { model } = this.props
-    const { x, y, width, height, radius } = model
-    const style = model.getNodeStyle()
-    return h('g', {}, [
-      h('rect', {
-        ...style,
-        x: x - width / 2,
-        y: y - height / 2,
-        rx: radius,
-        ry: radius,
-        width,
-        height
-      }),
-      this.getLabelShape()
-    ])
+  /**
+   * 给model自定义添加字段方法
+   */
+  addField(item) {
+    this.properties.fields.push(item)
+    this.setAttributes()
+    // 为了保持节点顶部位置不变，在节点变化后，对节点进行一个位移,位移距离为添加高度的一半。
+    this.move(0, 24 / 2)
+  }
+  getOutlineStyle() {
+    const style = super.getOutlineStyle()
+    style.stroke = 'none'
+    style.hover.stroke = 'none'
+    return style
+  }
+  // 如果不用修改锚地形状，可以重写颜色相关样式
+  getAnchorStyle(anchorInfo) {
+    const style = super.getAnchorStyle()
+    if (anchorInfo.type === 'left') {
+      style.fill = 'red'
+      style.hover.fill = 'transparent'
+      style.hover.stroke = 'transpanrent'
+      style.className = 'lf-hide-default'
+    } else {
+      style.fill = 'green'
+    }
+    return style
+  }
+  getDefaultAnchor() {
+    const {
+      id,
+      x,
+      y,
+      width,
+      height,
+      properties: { fields }
+    } = this
+    const anchors = []
+    fields.forEach((feild, index) => {
+      anchors.push({
+        x: x - width / 2 + 10,
+        y: y - height / 2 + 60 + index * 24,
+        id: `${id}_${index}_left`,
+        edgeAddable: false,
+        type: 'left'
+      })
+      anchors.push({
+        x: x + width / 2 - 10,
+        y: y - height / 2 + 60 + index * 24,
+        id: `${id}_${index}_right`,
+        type: 'right'
+      })
+    })
+    return anchors
   }
 }
 
 export default {
   type: 'featureUnit',
-  view: featureUnitView,
-  model: featureUnitModel
+  model: featureUnitModel,
+  view: featureUnitView
 }
