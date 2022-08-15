@@ -1,6 +1,49 @@
-import { h, RectNode, RectNodeModel } from '@logicflow/core'
+import { h, CircleNode, CircleNodeModel } from '@logicflow/core'
 
-class startPointModel extends RectNodeModel {
+class startPointView extends CircleNode {
+  // 渲染需要自定义的svg图形函数
+  getLabelShape() {
+    const { model } = this.props
+    const { x, y } = model
+    const style = model.getNodeStyle()
+    return h(
+      'svg',
+      {
+        x: x - 36,
+        y: y - 16,
+        width: 25,
+        height: 25,
+        viewBox: '0 0 1024 1024'
+      },
+      [h('path', {
+        fill: style.stroke,
+        d: 'M512.275957 90.714489a421.46112 421.46112 0 1 1-421.46112 421.46112 421.912686 421.912686 0 0 1 421.46112-421.46112m0-80.278309a501.739429 501.739429 0 1 0 501.739428 501.739429 501.739429 501.739429 0 0 0-501.739428-501.739429z'
+      }),
+      h('path', {
+        fill: style.stroke,
+        d: 'M370.233524 655.22152c0 39.687589 28.147582 55.99412 62.717429 36.024891l247.608408-143.045911a38.082023 38.082023 0 0 0 0-72.099956L432.800431 333.004459c-34.419325-20.069577-62.717429-3.612524-62.717428 36.075065 0.150522 0.301044 0.150522 286.141996 0.150521 286.141996z'
+      })
+      ]
+    )
+  }
+
+  getShape() {
+    const { model } = this.props
+    const { x, y, r } = model
+    const style = model.getNodeStyle()
+    return h('g', {}, [
+      h('circle', {
+        ...style,
+        cx: x,
+        cy: y,
+        r: r
+      }),
+      this.getLabelShape()
+    ])
+  }
+}
+
+class startPointModel extends CircleNodeModel {
   // 样式属性重写
   getNodeStyle() {
     const style = super.getNodeStyle()
@@ -12,9 +55,7 @@ class startPointModel extends RectNodeModel {
     // fill-opacity 指定了填色的不透明度、对象内容物的不透明度
     // font-size 定义了文本字体大小
     // color 定义文本颜色
-    style.stroke = 'blue'
-    style.strokeDasharray = '3 3'
-
+    style.stroke = 'green'
     return style
   }
 
@@ -27,15 +68,12 @@ class startPointModel extends RectNodeModel {
     // rx、ry: 椭圆节点和菱形节点存在，水平、垂直圆角的半径
     // points: 多边形特有的，多边形的各个顶点
     super.initNodeData(data)
-    this.width = 150
-    this.height = 150
-    this.radius = 10
+    this.r = 50
 
     // 文本自定义
-    const { x, y, height } = this
+    const { x } = this
     this.text.value = '开始'
-    this.text.x = x - 10
-    this.text.y = y - height / 2 + 18
+    this.text.x = x + 16
     this.text.draggable = false
     this.text.editable = true
   }
@@ -48,23 +86,23 @@ class startPointModel extends RectNodeModel {
   getTextStyle() {
     const style = super.getTextStyle()
     style.fontSize = 16
-    style.color = 'red'
+    style.color = 'green'
     return style
   }
 
   // 自定义锚点样式
   getDefaultAnchor() {
-    const { width, x, y, id } = this
+    const { r, x, y, id } = this
     return [
       {
-        x: x - width / 2,
+        x: x - r,
         y,
         type: 'left',
         edgeAddable: false, // 控制节点是否可以从此锚点手动创建连线，默认为true
         id: `${id}_0`
       },
       {
-        x: x + width / 2,
+        x: x + r,
         y,
         type: 'right',
         id: `${id}_1`
@@ -84,47 +122,6 @@ class startPointModel extends RectNodeModel {
       style.hover.stroke = 'green'
     }
     return style
-  }
-}
-
-class startPointView extends RectNode {
-  // 渲染需要自定义的svg图形函数
-  getLabelShape() {
-    const { model } = this.props
-    const { x, y, width, height } = model
-    const style = model.getNodeStyle()
-    return h(
-      'svg',
-      {
-        x: x - width / 2 + 5,
-        y: y - height / 2 + 5,
-        width: 25,
-        height: 25,
-        viewBox: '0 0 1274 1024'
-      },
-      h('path', {
-        fill: style.stroke,
-        d: 'M655.807326 287.35973m-223.989415 0a218.879 218.879 0 1 0 447.978829 0 218.879 218.879 0 1 0-447.978829 0ZM1039.955839 895.482975c-0.490184-212.177424-172.287821-384.030443-384.148513-384.030443-211.862739 0-383.660376 171.85302-384.15056 384.030443L1039.955839 895.482975z'
-      })
-    )
-  }
-
-  getShape() {
-    const { model } = this.props
-    const { x, y, width, height, radius } = model
-    const style = model.getNodeStyle()
-    return h('g', {}, [
-      h('rect', {
-        ...style,
-        x: x - width / 2,
-        y: y - height / 2,
-        rx: radius,
-        ry: radius,
-        width,
-        height
-      }),
-      this.getLabelShape()
-    ])
   }
 }
 

@@ -17,12 +17,13 @@ class featureUnitView extends HtmlResize.view {
       className: `custom-anchor ${type === 'left' ? 'incomming-anchor' : 'outgoing-anchor'}`
     })
   }
+
   setHtml(rootEl) {
     rootEl.innerHTML = ''
     const {
       properties: { fields, tableName }
     } = this.props.model
-    rootEl.setAttribute('class', 'table-container')
+    rootEl.setAttribute('class', 'table-container') // 给html节点添加class类名的方式
     const container = document.createElement('div')
     container.className = `table-node table-color-${Math.ceil(
       Math.random() * 4
@@ -30,10 +31,8 @@ class featureUnitView extends HtmlResize.view {
     const tableNameElement = document.createElement('div')
     tableNameElement.innerText = tableName
     tableNameElement.className = 'table-name'
-    container.appendChild(tableNameElement)
     const fragment = document.createDocumentFragment()
-    for (let i = 0; i < fields.length; i++) {
-      const item = fields[i]
+    fields.forEach(item => {
       const itemElement = document.createElement('div')
       itemElement.className = 'table-feild'
       const itemKey = document.createElement('span')
@@ -44,13 +43,15 @@ class featureUnitView extends HtmlResize.view {
       itemElement.appendChild(itemKey)
       itemElement.appendChild(itemType)
       fragment.appendChild(itemElement)
-    }
+    })
+    container.appendChild(tableNameElement)
     container.appendChild(fragment)
     rootEl.appendChild(container)
   }
 }
 
 class featureUnitModel extends HtmlResize.model {
+  // resize节点仅能在initData中修改节点的属性
   initNodeData(data) {
     super.initNodeData(data)
     this.text.editable = false
@@ -78,19 +79,21 @@ class featureUnitModel extends HtmlResize.model {
    */
   addField(item) {
     this.properties.fields.push(item)
-    this.setAttributes()
+    this.initNodeData()
     // 为了保持节点顶部位置不变，在节点变化后，对节点进行一个位移,位移距离为添加高度的一半。
     this.move(0, 24 / 2)
   }
+
   getOutlineStyle() {
     const style = super.getOutlineStyle()
     style.stroke = 'none'
     style.hover.stroke = 'none'
     return style
   }
-  // 如果不用修改锚地形状，可以重写颜色相关样式
+
+  // 如果不用修改锚地形状，可以重写颜色相关样式(实际上在上面，锚点的view已经被重写，因此下面的代码已被覆盖)
   getAnchorStyle(anchorInfo) {
-    const style = super.getAnchorStyle()
+    const style = super.getAnchorStyle(anchorInfo)
     if (anchorInfo.type === 'left') {
       style.fill = 'red'
       style.hover.fill = 'transparent'
@@ -101,6 +104,7 @@ class featureUnitModel extends HtmlResize.model {
     }
     return style
   }
+
   getDefaultAnchor() {
     const {
       id,

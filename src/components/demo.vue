@@ -20,7 +20,10 @@ export default {
         grid: true, // 网格
         plugins: [Menu, DndPanel, Control, SelectionSelect, InsertNodeInPolyline], // 插件
         stopZoomGraph: false, // 禁止缩放
-        stopScrollGraph: true // 禁止鼠标滚动移动画布
+        stopScrollGraph: true, // 禁止鼠标滚动移动画布
+        keyboard: {
+          enabled: true // 开启键盘快捷键
+        }
       })
 
       // 注册自定义的节点类型
@@ -28,75 +31,52 @@ export default {
       lf.register(featureUnit)
       lf.register(endPoint)
 
-      // 初始化画布数据
-      const graphData = {
-        nodes: [
-          {
-            id: '1',
-            type: 'startPoint',
-            x: 300,
-            y: 100,
-            text: '节点1'
-          },
-          {
-            id: '2',
-            type: 'circle',
-            x: 800,
-            y: 400,
-            text: '节点2'
-          },
-          {
-            id: '3',
-            type: 'featureUnit',
-            x: 850,
-            y: 200,
-            properties: {
-              tableName: 'Users',
-              fields: [
-                {
-                  key: 'id',
-                  type: 'string'
-                },
-                {
-                  key: 'name',
-                  type: 'string'
-                },
-                {
-                  key: 'age',
-                  type: 'integer'
-                }
-              ]
-            }
-          }
-        ],
-        edges: [
-          {
-            sourceNodeId: '1',
-            targetNodeId: '3',
-            type: 'bezier',
-            text: ''
-          },
-          {
-            sourceNodeId: '3',
-            targetNodeId: '2',
-            type: 'bezier',
-            text: ''
-          }
-        ]
-      }
+      // 初始化画布数据(可以为空)
 
       // 添加拖拽面板
       const patternItems = [
         {
           type: 'startPoint',
           text: '开始',
-          label: '开始'
+          label: '开始',
+          className: 'startPoint'
+        },
+        {
+          type: 'featureUnit',
+          label: '特征单元',
+          className: 'featureUnit',
+          properties: {
+            tableName: '特征单元',
+            fields: [
+              {
+                key: '特征参数1',
+                type: '值'
+              },
+              {
+                key: '特征参数2',
+                type: '值'
+              },
+              {
+                key: '特征参数3',
+                type: '值'
+              }
+            ]
+          }
+        },
+        {
+          type: 'endPoint',
+          text: '结束',
+          label: '结束',
+          className: 'end'
         }
       ]
       lf.extension.dndPanel.setPatternItems(patternItems)
 
-      lf.render(graphData) // 渲染数据
+      lf.render() // 渲染数据
+
       lf.extension.selectionSelect.openSelectionSelect() // 开启框选功能
+
+      lf.setDefaultEdgeType('bezier') // 设置默认的曲线类型
     })
 
     return { container }
@@ -107,7 +87,7 @@ export default {
   <div ref="container" class="box">LogicFlow-DEMO</div>
 </template>
 
-<style lang="less" scoped>
+<style scoped lang="less">
 .box {
   width: 1000px;
   height: 500px;
