@@ -69,19 +69,3 @@
 .outgoing-anchor {
   stroke: #82b366;
 }
-
-/* dnd面板样式 */
-.startPoint>.lf-dnd-shape {
-  background-image: url('@/assets/svg/start.svg');
-  background-size: cover;
-}
-
-.featureUnit>.lf-dnd-shape {
-  background-image: url('@/assets/svg/featureUnit.svg');
-  background-size: cover;
-}
-
-.end>.lf-dnd-shape {
-  background-image: url('@/assets/svg/end.svg');
-  background-size: cover;
-}

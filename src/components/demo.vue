@@ -94,4 +94,20 @@ export default {
   margin: 50px auto;
   background-color: pink;
 }
+
+/* dnd面板样式 */
+:deep(.startPoint>.lf-dnd-shape) {
+  background-image: url('@/assets/svg/start.svg');
+  background-size: cover;
+}
+
+:deep(.featureUnit>.lf-dnd-shape) {
+  background-image: url('@/assets/svg/featureUnit.svg');
+  background-size: cover;
+}
+
+:deep(.end>.lf-dnd-shape) {
+  background-image: url('@/assets/svg/end.svg');
+  background-size: cover;
+}
 </style>
