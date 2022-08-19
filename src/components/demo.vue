@@ -23,13 +23,15 @@ export default {
         stopScrollGraph: true, // 禁止鼠标滚动移动画布
         keyboard: {
           enabled: true // 开启键盘快捷键
-        }
+        },
+        edgeType: 'bezier' // 设置默认的连线类型
       })
 
       // 注册自定义的节点类型
-      lf.register(startPoint)
-      lf.register(featureUnit)
-      lf.register(endPoint)
+      // lf.register(startPoint)
+      // lf.register(featureUnit)
+      // lf.register(endPoint)
+      lf.batchRegister([startPoint, featureUnit, endPoint]) // 批量注册
 
       // 初始化画布数据(可以为空)
 
