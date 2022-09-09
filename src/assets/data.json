@@ -1,0 +1,181 @@
+{
+	"nodes": [{
+		"id": "5991c86f-e07f-49d1-aa9d-a765ce8b0fcd",
+		"type": "startPoint",
+		"x": 260,
+		"y": 100,
+		"properties": {},
+		"text": {
+			"x": 276,
+			"y": 100,
+			"value": "开始"
+		}
+	}, {
+		"id": "7c7ed0b5-0a11-408f-9a94-721a53e83139",
+		"type": "featureUnit",
+		"x": 560,
+		"y": 100,
+		"properties": {
+			"tableName": "特征单元",
+			"fields": [{
+				"key": "特征参数1",
+				"type": "值"
+			}, {
+				"key": "特征参数2",
+				"type": "值"
+			}, {
+				"key": "特征参数3",
+				"type": "值"
+			}]
+		}
+	}, {
+		"id": "615241cc-5bb7-4c07-bab1-12404f1ac013",
+		"type": "endPoint",
+		"x": 940,
+		"y": 180,
+		"properties": {},
+		"text": {
+			"x": 956,
+			"y": 180,
+			"value": "结束"
+		}
+	}, {
+		"id": "656f414d-e5d8-4cd2-b05f-a184bfbba3a4",
+		"type": "featureUnit",
+		"x": 560,
+		"y": 220,
+		"properties": {
+			"tableName": "特征单元",
+			"fields": [{
+				"key": "特征参数1",
+				"type": "值"
+			}, {
+				"key": "特征参数2",
+				"type": "值"
+			}, {
+				"key": "特征参数3",
+				"type": "值"
+			}]
+		}
+	}, {
+		"id": "30fa01bc-e799-4089-aa2d-ddd424c1b846",
+		"type": "endPoint",
+		"x": 920,
+		"y": 380,
+		"properties": {},
+		"text": {
+			"x": 936,
+			"y": 380,
+			"value": "结束"
+		}
+	}],
+	"edges": [{
+		"id": "5a31ad5e-159d-4f8a-ab36-e13e1cb4d72d",
+		"type": "polyline",
+		"sourceNodeId": "5991c86f-e07f-49d1-aa9d-a765ce8b0fcd",
+		"targetNodeId": "7c7ed0b5-0a11-408f-9a94-721a53e83139",
+		"startPoint": {
+			"x": 310,
+			"y": 100
+		},
+		"endPoint": {
+			"x": 470,
+			"y": 118
+		},
+		"properties": {},
+		"pointsList": [{
+			"x": 310,
+			"y": 100
+		}, {
+			"x": 390,
+			"y": 100
+		}, {
+			"x": 390,
+			"y": 118
+		}, {
+			"x": 470,
+			"y": 118
+		}]
+	}, {
+		"id": "79a3e984-8354-4031-a498-bc48c27e3c63",
+		"type": "polyline",
+		"sourceNodeId": "7c7ed0b5-0a11-408f-9a94-721a53e83139",
+		"targetNodeId": "615241cc-5bb7-4c07-bab1-12404f1ac013",
+		"startPoint": {
+			"x": 650,
+			"y": 118
+		},
+		"endPoint": {
+			"x": 890,
+			"y": 180
+		},
+		"properties": {},
+		"pointsList": [{
+			"x": 650,
+			"y": 118
+		}, {
+			"x": 770,
+			"y": 118
+		}, {
+			"x": 770,
+			"y": 180
+		}, {
+			"x": 890,
+			"y": 180
+		}]
+	}, {
+		"id": "904c3d01-392c-4c98-8ffc-11ca4a46152b",
+		"type": "polyline",
+		"sourceNodeId": "5991c86f-e07f-49d1-aa9d-a765ce8b0fcd",
+		"targetNodeId": "656f414d-e5d8-4cd2-b05f-a184bfbba3a4",
+		"startPoint": {
+			"x": 310,
+			"y": 100
+		},
+		"endPoint": {
+			"x": 470,
+			"y": 238
+		},
+		"properties": {},
+		"pointsList": [{
+			"x": 310,
+			"y": 100
+		}, {
+			"x": 390,
+			"y": 100
+		}, {
+			"x": 390,
+			"y": 238
+		}, {
+			"x": 470,
+			"y": 238
+		}]
+	}, {
+		"id": "cc1a53c2-a22e-44ca-a437-a08788735bd2",
+		"type": "polyline",
+		"sourceNodeId": "656f414d-e5d8-4cd2-b05f-a184bfbba3a4",
+		"targetNodeId": "30fa01bc-e799-4089-aa2d-ddd424c1b846",
+		"startPoint": {
+			"x": 650,
+			"y": 238
+		},
+		"endPoint": {
+			"x": 870,
+			"y": 380
+		},
+		"properties": {},
+		"pointsList": [{
+			"x": 650,
+			"y": 238
+		}, {
+			"x": 690,
+			"y": 238
+		}, {
+			"x": 690,
+			"y": 380
+		}, {
+			"x": 870,
+			"y": 380
+		}]
+	}]
+}

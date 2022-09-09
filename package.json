@@ -10,6 +10,8 @@
   "dependencies": {
     "@logicflow/core": "^1.1.23",
     "@logicflow/extension": "^1.1.23",
+    "element-plus": "^2.2.16",
+    "file-saver": "^2.0.5",
     "less": "^4.1.3",
     "vue": "^3.2.37"
   },

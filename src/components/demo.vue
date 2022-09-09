@@ -1,30 +1,32 @@
 <script>
 import { ref, onMounted } from 'vue'
 import LogicFlow from '@logicflow/core'
-import { Menu, DndPanel, Control, SelectionSelect, InsertNodeInPolyline } from '@logicflow/extension'
+import { Menu, DndPanel, Control, SelectionSelect, InsertNodeInPolyline, Snapshot } from '@logicflow/extension'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 import startPoint from '@/nodeTypeLib/startPoint'
 import endPoint from '@/nodeTypeLib/endPoint'
 import featureUnit from '@/nodeTypeLib/featureUnit'
-import '@/assets/style.css'
+import '@/css/style.css'
+import fileSaver from 'file-saver'
 
 export default {
   name: 'demoIndex',
   setup() {
     const container = ref(null)
+    let lf = null
     onMounted(() => {
       // 实例化画布
-      const lf = new LogicFlow({
+      lf = new LogicFlow({
         container: container.value, // 布局容器
         grid: true, // 网格
-        plugins: [Menu, DndPanel, Control, SelectionSelect, InsertNodeInPolyline], // 插件
+        plugins: [Menu, DndPanel, Control, SelectionSelect, InsertNodeInPolyline, Snapshot], // 插件
         stopZoomGraph: false, // 禁止缩放
         stopScrollGraph: true, // 禁止鼠标滚动移动画布
         keyboard: {
           enabled: true // 开启键盘快捷键
         },
-        edgeType: 'bezier' // 设置默认的连线类型
+        edgeType: 'polyline' // 设定默认的边类型
       })
 
       // 注册自定义的节点类型
@@ -77,15 +79,53 @@ export default {
       lf.render() // 渲染数据
 
       lf.extension.selectionSelect.openSelectionSelect() // 开启框选功能
-
-      lf.setDefaultEdgeType('bezier') // 设置默认的曲线类型
     })
 
-    return { container }
+    const saveAsJson = () => {
+      const blob = new Blob([JSON.stringify(lf.getGraphData())])
+      fileSaver.saveAs(blob, 'data.json')
+    }
+
+    const load = (uploadFile) => {
+      const reader = new FileReader()
+      reader.readAsText(uploadFile.raw)
+      reader.onload = function() {
+        const graphData = JSON.parse(this.result)
+        lf.render(graphData)
+      }
+    }
+
+    const clear = () => {
+      lf.graphModel.clearData()
+    }
+
+    const saveAsPicture = () => {
+      lf.extension.snapshot.getSnapshot()
+    }
+
+    return { container, saveAsJson, saveAsPicture, load, clear }
   }
 }
 </script>
+
 <template>
+  <div>
+    <el-button type="primary" @click="saveAsJson">save as JSON</el-button>
+    <el-button @click="saveAsPicture" type="primary">save as picture</el-button>
+    <el-upload
+      ref="uploadRef"
+      class="upload-demo"
+      action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+      :auto-upload="true"
+      :on-change="load"
+      :on-remove="clear"
+      :limit="1"
+    >
+      <template #trigger>
+        <el-button type="success">加载流程图</el-button>
+      </template>
+    </el-upload>
+  </div>
   <div ref="container" class="box">LogicFlow-DEMO</div>
 </template>
 
@@ -95,6 +135,10 @@ export default {
   height: 500px;
   margin: 50px auto;
   background-color: pink;
+}
+
+.upload-demo {
+  margin-top: 20px;
 }
 
 /* dnd面板样式 */
